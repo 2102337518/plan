@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<tilemap tilemapservice="http://www.osgeo.org/services/tilemapservice.xml" version="1.0.0">
+<title>My Map Set Name</title>
+<abstract></abstract>
+<srs>EPSG:900913</srs>
+<vsrs></vsrs>
+<boundingbox maxx="13775786.9856674" maxy="3757032.8142729" minx="12523442.7142431" miny="2504688.5428486">
+</boundingbox>
+<origin x="-20037508.3427890" y="-20037508.3427890"></origin>
+<tileformat extension="png" height="256" mime-type="image/png" width="256">
+</tileformat>
+<tilesets profile="global-mercator">
+  <tileset href="Z:/fyc/龙华/5" order="5" units-per-pixel="4891.9698103"></tileset>
+  <tileset href="Z:/fyc/龙华/6" order="6" units-per-pixel="2445.9849051"></tileset>
+  <tileset href="Z:/fyc/龙华/7" order="7" units-per-pixel="1222.9924526"></tileset>
+  <tileset href="Z:/fyc/龙华/8" order="8" units-per-pixel="611.4962263"></tileset>
+  <tileset href="Z:/fyc/龙华/9" order="9" units-per-pixel="305.7481131"></tileset>
+  <tileset href="Z:/fyc/龙华/10" order="10" units-per-pixel="152.8740566"></tileset>
+  <tileset href="Z:/fyc/龙华/11" order="11" units-per-pixel="76.4370283"></tileset>
+  <tileset href="Z:/fyc/龙华/12" order="12" units-per-pixel="38.2185141"></tileset>
+  <tileset href="Z:/fyc/龙华/13" order="13" units-per-pixel="19.1092571"></tileset>
+  <tileset href="Z:/fyc/龙华/14" order="14" units-per-pixel="9.5546285"></tileset>
+</tilesets>
+</tilemap>

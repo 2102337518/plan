@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World</title>
+    <script src="./Cesium/Cesium.js"></script>
+
+    <script src="./srcf/DrawPath.js"></script>
+    <script src="./srcf/A_node.js"></script>
+    <script src="./srcf/AStarSearch.js"></script>
+    <script src="./srcf/hello.js"></script>
+    <script src="./srcf/loadtif.js"></script>
+
+    <style>
+        @import url(./Cesium/Widgets/widgets.css);
+        html, body, #container {
+          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5YzY2NDk2Ny00OWZhLTQ5YTktYjdlOS0wMDk3ZmZhOTc0NTAiLCJpZCI6MTM3MjM5LCJpYXQiOjE2ODM1NTU1NDN9.dxocosCJ9tciVK_byx51hThymhw7R4EhwkNi7S7tFwY'
+        var viewer = new Cesium.Viewer("container",{
+            terrainProvider: Cesium.createWorldTerrain({
+                // url: '/home/yqx/cesium prj/Cesium/cesium_demo/map/longhua',
+                requestWaterMask: true, // 请求水体效果所需要的海岸线数据
+                requestVertexNormals: true, // 请求地形照明数据
+            }),
+        });
+     
+        // var startint_point = [114.89594,23.35077];
+        // var ending_point = [114.99278,23.45076];
+        var startint_point = [33.85594,23.35077];
+        var ending_point = [33.97278,23.46076];
+        var Resolution_Ratio = 0.0002;
+        var cols = Math.trunc((ending_point[0]-startint_point[0])/Resolution_Ratio) + 1;
+        var rows = Math.trunc((ending_point[1]-startint_point[1])/Resolution_Ratio) + 1;
+        // var cols = 2;
+        // var rows = 2;
+        // console.log(cols,rows);
+        var pose1 = Cesium.Cartographic.fromDegrees(114.22268842439114,38.134979272096594);
+        var pose2 = Cesium.Cartographic.fromDegrees(114.22268842439114,39.134979272096594);
+        var p = new Array(2);
+        p[0] = 114.22268842439114;
+        p[1] = 40.134979272096594;
+        var pose3 = Cesium.Cartographic.fromDegrees(p[0],p[1]);
+        
+        var GeographicPoints = new Array();
+        // GeographicPoints[0] = new Array(cols * rows);
+        // GeographicPoints[1] = new Array(cols * rows);
+        //GridPoint[i] = new Array(cols);
+        // for (var i = 0; i < rows; i++) {
+        //     for (var j = 0; j < cols; j++) {
+        //         GridPoint[i,j] = [i,j];
+        //     }
+        // }
+        for (var i = 0; i < rows; i++) {
+            for (var j = 0; j < cols; j++) {
+            var GridPoint = new Array(2);
+            GridPoint = [i,j];
+            var GeographicPoint = GridToPosition(startint_point,GridPoint,Resolution_Ratio);
+            GeographicPoints.push(Cesium.Cartographic.fromDegrees(GeographicPoint[0],GeographicPoint[1]));
+            // GeographicPoints[2 * (cols * i + j)] = GeographicPoint[0];
+            // GeographicPoints[2 * (cols * i + j) + 1] = GeographicPoint[1];
+            // GeographicPoints[0][cols * i + j] = GeographicPoint[0];
+            // GeographicPoints[1][cols * i + j] = GeographicPoint[1];
+
+            }
+        }
+        // console.log(GeographicPoint);
+        var arr = new Array();
+        arr.push(pose1);
+        arr.push(pose2);
+        arr.push(pose3);
+        // console.log(arr.length);
+        // console.log(arr[1]);
+        // console.log(startint_point);
+        // console.log(Resolution_Ratio);
+        // console.log(GeographicPoints);
+        //var GridHeight = new Array();
+        window.GridHeight = new Array();
+        const t2 = performance.now();
+        var btn = document.createElement('button');
+        btn.textContent = 'Click me';
+        btn.addEventListener('click', function() {
+            // 处理事件
+            console.log('Button clicked');
+        });
+
+        var toolbar = document.getElementById('toolbar');
+        //toolbar.appendChild(btn);
+        Cesium.sampleTerrainMostDetailed(viewer.terrainProvider,GeographicPoints).then(function(updatedPositions) {
+            
+            for (var i = 0; i < GeographicPoints.length; i++){
+                window.GridHeight[i] = updatedPositions[i].height;
+            };
+            console.log('高程提取完成！');
+            plan();
+            
+        });
+        
+        // var points_two_dim = AStarSearch();
+        // DrawPath(points_two_dim);
+            
+        function plan() {
+            
+            let grid = new Array(rows);
+            for (var i = 0; i < rows; i++) {
+                grid[i] = new Array(cols);
+            }
+            var row = 0, col = 0;
+            for (var i = 0; i < cols * rows; i++) {
+                grid[row][col++] = window.GridHeight[i];
+                //grid[row][col++] = 20;
+                if ((i + 1) % cols == 0) {
+                    row++;
+                    col = 0;
+                }
+            }
+            // console.log(grid);
+            // setTimeout(function () {
+                // var points_two_dim = AStarSearch();
+                // DrawPath(points_two_dim);
+                //DrawPath(GeographicPoints);
+
+                // let grid_test = [
+                // [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                // [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1],
+                // [0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0],
+                // [0, 1, 1, 0, 0, 2, 0, 1, 0, 0, 1, 0, 0],
+                // [0, 1, 1, 0, 0, 1, 1, 0, 2, 2, 0, 0, 0],
+                // [0, 0, 1, 1, 1, 3, 1, 0, 1, 2, 0, 2, 3],
+                // [0, 0, 1, 1, 1, 3, 1, 0, 1, 2, 0, 2, 3],
+                // [0, 1, 1, 0, 0, 1, 1, 0, 2, 2, 0, 0, 0],
+                // [0, 1, 1, 0, 0, 2, 0, 1, 0, 0, 1, 0, 0],
+                // ]; //测试用例
+                // let grid_test = [
+                // [35.767657218726086, 63.2891100606663, 175.75345405551911, 235.0182814291111, 198.86638020950497],
+                // [28.501957111103856, 35.44278372700218, 41.78137156778236, 53.41091541308548, 72.85701467186786],
+                // [27.09841374084356, 58.59743177558313, 31.982888892628008, 34.01272264980684, 40.115238550121845],
+                // [81.00633161322023, 38.4797704318365, 26.2553132695419, 28.194745938687106, 28.6050430716524],
+                // [71.11650764355578, 27.161833845357336, 26.681156447641598, 34.12597127358528, 30.21660009080128]
+                // ];
+                // if (grid[][]
+                console.log(grid);
+                // 下面是鼠标事件
+                
+                    let astar = new AstarAlgorithm(grid);
+                    // console.assert(astar.grid)
+                    //console.log(astar.findPath());
+                    console.log("正在规划路径，请稍等……");
+                    const t0 = performance.now();
+                    let PathNode = new Array();
+                    PathNode = astar.findPath();
+                    const t1 = performance.now();
+                    
+                    console.log(`A* algorithm took ${t1 - t0} milliseconds.`);
+                    const t3 = performance.now();
+                    console.log(`Load DEM A* algorithm took ${t3 - t2} milliseconds.`);
+                    console.log(PathNode);
+                    console.log("共寻找轨迹点数：",PathNode.length);
+                    var points_two_dim = NodeToPoints(startint_point,PathNode,Resolution_Ratio);
+                    DrawPath(points_two_dim);
+
+    
+                
+
+                // let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+                // handler.setInputAction(function (movement) {
+                    
+                // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+                
+            // },2000);
+        }
+        // }, 2000); // 5000 毫秒即 5 秒
+    
+    </script>
+</body>
+</html>
